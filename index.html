@@ -3,144 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Study Planner - Live</title>
+    <title>Smart Study Planner - Single File</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --card-bg: #ffffff;
+        }
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #f8f9fa;
+            --card-bg: #2d2d2d;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+        }
+        .card {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: none;
+            border-radius: 12px;
+        }
+        .list-group-item {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-color: rgba(0,0,0,0.1);
+        }
+        [data-theme="dark"] .list-group-item {
+            border-color: rgba(255,255,255,0.1);
+        }
+        .progress {
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 20px;
+        }
+        [data-theme="dark"] .progress {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .btn-primary { border-radius: 8px; }
+        .shadow-custom { box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    </style>
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="#">SmartStudy Live</a>
+            <a class="navbar-brand fw-bold" href="#">🎯 SmartStudy</a>
             <div class="ms-auto">
-                <button id="darkModeToggle" class="btn btn-sm btn-outline-light">Toggle Dark Mode</button>
+                <button id="darkModeToggle" class="btn btn-sm btn-outline-light">🌙 Toggle Mode</button>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
-        <div id="authSection" class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="card shadow">
-                    <div class="card-body">
-                        <h3 class="text-center">Welcome</h3>
-                        <p class="text-center text-muted">Enter a name to start (Saved locally)</p>
-                        <div class="mb-3">
-                            <input type="text" id="usernameInput" class="form-control" placeholder="Your Name">
+        <!-- Login Section -->
+        <div id="authSection" class="row justify-content-center py-5">
+            <div class="col-md-5">
+                <div class="card shadow-lg p-4">
+                    <div class="card-body text-center">
+                        <h2 class="mb-4">Study Smarter</h2>
+                        <p class="text-muted mb-4">Your personalized AI-powered study companion. Data is saved locally in your browser.</p>
+                        <div class="mb-4">
+                            <input type="text" id="usernameInput" class="form-control form-control-lg text-center" placeholder="What's your name?">
                         </div>
-                        <button id="loginBtn" class="btn btn-primary w-100">Start Planning</button>
+                        <button id="loginBtn" class="btn btn-primary btn-lg w-100">Get Started</button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Dashboard Section -->
         <div id="mainDashboard" class="row d-none">
-            <!-- Sidebar / Stats -->
             <div class="col-md-4">
-                <div class="card mb-4 shadow-sm">
+                <div class="card mb-4 shadow-custom">
                     <div class="card-body">
-                        <h4>Hello, <span id="displayName">User</span>!</h4>
-                        <p id="motivationalMsg" class="text-muted italic"></p>
+                        <h4 class="fw-bold">Hi, <span id="displayName">Student</span>! 👋</h4>
+                        <p id="motivationalMsg" class="text-muted fst-italic"></p>
                         <hr>
-                        <h5>Progress</h5>
-                        <div class="progress mb-2" style="height: 25px;">
-                            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+                        <h6 class="fw-bold mb-3">Your Progress</h6>
+                        <div class="progress mb-3" style="height: 25px;">
+                            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;">0%</div>
                         </div>
-                        <p id="progressText">Completed: 0 | Pending: 0</p>
+                        <p id="progressText" class="small text-muted mb-0"></p>
                     </div>
                 </div>
 
-                <div class="card mb-4 shadow-sm">
+                <div class="card mb-4 shadow-custom">
                     <div class="card-body">
-                        <h5>Weekly Progress</h5>
+                        <h6 class="fw-bold mb-3">Productivity Chart</h6>
                         <canvas id="progressChart"></canvas>
                     </div>
                 </div>
 
-                <div class="card mb-4 shadow-sm">
+                <div class="card mb-4 shadow-custom text-center">
                     <div class="card-body">
-                        <h5>Pomodoro Timer</h5>
-                        <div class="text-center">
-                            <h2 id="timerDisplay">25:00</h2>
+                        <h6 class="fw-bold mb-3">⏳ Pomodoro Timer</h6>
+                        <h1 id="timerDisplay" class="display-4 fw-bold mb-3">25:00</h1>
+                        <div class="d-flex justify-content-center gap-2">
                             <button id="startTimer" class="btn btn-success">Start</button>
                             <button id="pauseTimer" class="btn btn-warning">Pause</button>
-                            <button id="resetTimer" class="btn btn-danger">Reset</button>
+                            <button id="resetTimer" class="btn btn-outline-danger">Reset</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Main Content -->
             <div class="col-md-8">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>Today's Tasks</h3>
-                    <div>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add Task</button>
-                        <button id="generatePlanBtn" class="btn btn-outline-success">Smart Generate Plan</button>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold m-0">Tasks for Today</h3>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">+ Add Task</button>
+                        <button id="generatePlanBtn" class="btn btn-outline-success">🤖 Smart Plan</button>
                     </div>
                 </div>
 
-                <div id="taskList" class="list-group shadow-sm mb-4">
-                    <!-- Tasks will be injected here -->
+                <div id="taskList" class="list-group shadow-custom mb-4">
+                    <!-- Tasks injected here -->
                 </div>
 
-                <div class="mt-4">
-                    <h4>AI Recommendations</h4>
-                    <div id="recommendations" class="alert alert-light border">
-                        Analyzing your workload...
+                <div class="card border-0 bg-light p-3 shadow-custom">
+                    <h5 class="fw-bold mb-3">🧠 AI Recommendations</h5>
+                    <div id="recommendations">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <span class="ms-2">Analyzing workload...</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Add Task Modal -->
+    <!-- Modal -->
     <div class="modal fade" id="addTaskModal" tabindex="-1">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Task</h5>
+            <div class="modal-content card p-2">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">New Study Task</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Subject</label>
-                        <input type="text" id="taskSubject" class="form-control" required>
+                        <label class="form-label small fw-bold">Subject</label>
+                        <input type="text" id="taskSubject" class="form-control" placeholder="e.g. Mathematics">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Task Title</label>
-                        <input type="text" id="taskTitle" class="form-control" required>
+                        <label class="form-label small fw-bold">What to do?</label>
+                        <input type="text" id="taskTitle" class="form-control" placeholder="e.g. Solve Chapter 5 exercises">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Deadline</label>
-                        <input type="date" id="taskDeadline" class="form-control" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">Deadline</label>
+                            <input type="date" id="taskDeadline" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">Difficulty</label>
+                            <select id="taskDifficulty" class="form-select">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Difficulty</label>
-                        <select id="taskDifficulty" class="form-select">
-                            <option value="easy">Easy</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="hard">Hard</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Priority (1-High, 3-Low)</label>
-                        <input type="number" id="taskPriority" class="form-control" min="1" max="3" value="1">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Estimated Hours</label>
-                        <input type="number" step="0.5" id="taskHours" class="form-control" value="1">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">Priority</label>
+                            <select id="taskPriority" class="form-select">
+                                <option value="1">High (1)</option>
+                                <option value="2">Medium (2)</option>
+                                <option value="3">Low (3)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">Hours (Est.)</label>
+                            <input type="number" step="0.5" id="taskHours" class="form-control" value="1">
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button id="saveTaskBtn" class="btn btn-primary">Save Task</button>
+                <div class="modal-footer border-0">
+                    <button id="saveTaskBtn" class="btn btn-primary w-100 py-2">Add to My Schedule</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let tasks = JSON.parse(localStorage.getItem('study_tasks')) || [];
+            let user = localStorage.getItem('study_user') || null;
+
+            const authSection = document.getElementById('authSection');
+            const mainDashboard = document.getElementById('mainDashboard');
+            const loginBtn = document.getElementById('loginBtn');
+            const usernameInput = document.getElementById('usernameInput');
+            const displayName = document.getElementById('displayName');
+            const taskList = document.getElementById('taskList');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const motivationalMsg = document.getElementById('motivationalMsg');
+            let chartInstance = null;
+
+            if (user) showDashboard();
+
+            loginBtn.addEventListener('click', () => {
+                const name = usernameInput.value.trim();
+                if (name) {
+                    user = name;
+                    localStorage.setItem('study_user', name);
+                    showDashboard();
+                }
+            });
+
+            function showDashboard() {
+                authSection.classList.add('d-none');
+                mainDashboard.classList.remove('d-none');
+                displayName.textContent = user;
+                updateUI();
+                initChart();
+            }
+
+            document.getElementById('saveTaskBtn').addEventListener('click', () => {
+                const newTask = {
+                    id: Date.now(),
+                    subject: document.getElementById('taskSubject').value || 'General',
+                    title: document.getElementById('taskTitle').value || 'Study Session',
+                    deadline: document.getElementById('taskDeadline').value || new Date().toISOString().split('T')[0],
+                    difficulty: document.getElementById('taskDifficulty').value,
+                    priority: parseInt(document.getElementById('taskPriority').value),
+                    hours: parseFloat(document.getElementById('taskHours').value),
+                    completed: false,
+                    scheduledDate: null
+                };
+                tasks.push(newTask);
+                saveTasks();
+                updateUI();
+                bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
+            });
+
+            function saveTasks() { localStorage.setItem('study_tasks', JSON.stringify(tasks)); }
+
+            function updateUI() {
+                taskList.innerHTML = '';
+                tasks.forEach(task => {
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item d-flex justify-content-between align-items-center mb-2 rounded border shadow-sm';
+                    item.innerHTML = `
+                        <div>
+                            <h6 class="mb-1 fw-bold ${task.completed ? 'text-decoration-line-through text-muted' : ''}">${task.title}</h6>
+                            <span class="badge bg-primary-subtle text-primary me-2">${task.subject}</span>
+                            <small class="text-muted">🔥 ${task.difficulty} | ⚡ P${task.priority} | ⏰ ${task.hours}h</small>
+                            ${task.scheduledDate ? `<div class="mt-1"><small class="text-success fw-bold">📅 Scheduled for: ${task.scheduledDate}</small></div>` : ''}
+                        </div>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm ${task.completed ? 'btn-secondary' : 'btn-success'}" onclick="toggleTask(${task.id})">${task.completed ? 'Undo' : 'Done'}</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteTask(${task.id})">×</button>
+                        </div>
+                    `;
+                    taskList.appendChild(item);
+                });
+
+                const completed = tasks.filter(t => t.completed).length;
+                const total = tasks.length;
+                const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+                progressBar.style.width = percent + '%';
+                progressBar.textContent = percent + '%';
+                progressText.textContent = `Completed: ${completed} / ${total} tasks`;
+
+                const msgs = ["Believe in yourself!", "Consistency beats talent.", "Keep pushing forward.", "Success is built daily."];
+                motivationalMsg.textContent = `"${msgs[Math.floor(Math.random() * msgs.length)]}"`;
+                updateRecommendations();
+            }
+
+            window.toggleTask = (id) => {
+                tasks = tasks.map(t => t.id === id ? {...t, completed: !t.completed} : t);
+                saveTasks(); updateUI();
+            };
+
+            window.deleteTask = (id) => {
+                if(confirm('Delete this task?')) {
+                    tasks = tasks.filter(t => t.id !== id);
+                    saveTasks(); updateUI();
+                }
+            };
+
+            document.getElementById('generatePlanBtn').addEventListener('click', () => {
+                const sorted = [...tasks].filter(t => !t.completed).sort((a, b) => {
+                    if (a.deadline !== b.deadline) return new Date(a.deadline) - new Date(b.deadline);
+                    return a.priority - b.priority;
+                });
+                let curDate = new Date();
+                let dayHours = 0;
+                sorted.forEach(t => {
+                    if (dayHours + t.hours > 4 && dayHours > 0) {
+                        curDate.setDate(curDate.getDate() + 1);
+                        dayHours = 0;
+                    }
+                    t.scheduledDate = curDate.toISOString().split('T')[0];
+                    dayHours += t.hours;
+                });
+                tasks = [...tasks.filter(t => t.completed), ...sorted];
+                saveTasks(); updateUI();
+                alert('🤖 AI Plan Generated! Tasks distributed by deadline and workload.');
+            });
+
+            let timeLeft = 25 * 60; let timerId = null;
+            document.getElementById('startTimer').addEventListener('click', () => {
+                if (timerId) return;
+                timerId = setInterval(() => {
+                    timeLeft--;
+                    const m = Math.floor(timeLeft / 60); const s = timeLeft % 60;
+                    document.getElementById('timerDisplay').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+                    if (timeLeft <= 0) { clearInterval(timerId); alert("Break time!"); }
+                }, 1000);
+            });
+            document.getElementById('pauseTimer').addEventListener('click', () => { clearInterval(timerId); timerId = null; });
+            document.getElementById('resetTimer').addEventListener('click', () => {
+                clearInterval(timerId); timerId = null; timeLeft = 25 * 60;
+                document.getElementById('timerDisplay').textContent = "25:00";
+            });
+
+            function updateRecommendations() {
+                const recDiv = document.getElementById('recommendations');
+                const pending = tasks.filter(t => !t.completed);
+                const hard = pending.filter(t => t.difficulty === 'hard');
+                let html = '<div class="list-group list-group-flush bg-transparent">';
+                if (hard.length > 0) html += `<div class="list-group-item bg-transparent px-0 border-0">💡 <b>Focus Alert:</b> You have ${hard.length} difficult tasks. Try tackling them in the morning.</div>`;
+                if (pending.length > 3) html += `<div class="list-group-item bg-transparent px-0 border-0">⏰ <b>Workload:</b> Your list is growing. Use "Smart Plan" to organize.</div>`;
+                if (pending.length === 0) html += `<div class="list-group-item bg-transparent px-0 border-0">🌟 <b>Great Job!</b> Your schedule is clear. Relax!</div>`;
+                html += '</div>';
+                recDiv.innerHTML = html;
+            }
+
+            function initChart() {
+                const ctx = document.getElementById('progressChart');
+                if (chartInstance) chartInstance.destroy();
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Tasks Completed',
+                            data: [2, 3, 1, 4, 2, 0, 0],
+                            borderColor: '#0d6efd',
+                            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+                });
+            }
+
+            document.getElementById('darkModeToggle').addEventListener('click', () => {
+                const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+                document.getElementById('darkModeToggle').textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+            });
+        });
+    </script>
 </body>
 </html>
