@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <!-- Sidebar / Stats -->
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h4>Welcome, {{ current_user.username }}!</h4>
+                <p class="text-muted italic">"{{ message }}"</p>
+                <hr>
+                <h5>Progress</h5>
+                <div class="progress mb-2" style="height: 25px;">
+                    <div class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress|round|int }}%</div>
+                </div>
+                <p>Completed: {{ completed }} | Pending: {{ pending }}</p>
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5>Weekly Progress</h5>
+                <canvas id="progressChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5>Pomodoro Timer</h5>
+                <div class="text-center">
+                    <h2 id="timerDisplay">25:00</h2>
+                    <button id="startTimer" class="btn btn-success">Start</button>
+                    <button id="pauseTimer" class="btn btn-warning">Pause</button>
+                    <button id="resetTimer" class="btn btn-danger">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Today's Tasks</h3>
+            <div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add Task</button>
+                <a href="/generate_plan" class="btn btn-outline-success">Smart Generate Plan</a>
+            </div>
+        </div>
+
+        <div class="list-group shadow-sm">
+            {% for task in tasks %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-0 {% if task.completed %}text-decoration-line-through text-muted{% endif %}">{{ task.title }}</h6>
+                    <small class="badge bg-info text-dark">{{ task.subject }}</small>
+                    <small class="text-muted">| Difficulty: {{ task.difficulty }} | Priority: {{ task.priority }}</small>
+                </div>
+                <div>
+                    <a href="/complete_task/{{ task.id }}" class="btn btn-sm {% if task.completed %}btn-secondary{% else %}btn-success{% endif %}">
+                        {% if task.completed %}Undo{% else %}Done{% endif %}
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="list-group-item text-center text-muted">No tasks scheduled for today.</div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-4">
+            <h4>AI Recommendations</h4>
+            <div id="recommendations" class="alert alert-light border">
+                Analyzing your workload...
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/add_task" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Task Title</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Deadline</label>
+                        <input type="date" name="deadline" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Difficulty</label>
+                        <select name="difficulty" class="form-select">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Priority (1-High, 3-Low)</label>
+                        <input type="number" name="priority" class="form-control" min="1" max="3" value="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Estimated Hours</label>
+                        <input type="number" step="0.5" name="estimated_hours" class="form-control" value="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
