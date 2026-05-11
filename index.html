@@ -84,33 +84,26 @@
       <nav class="nav-links">
         <a onclick="showPage('homePage')" id="nav-home">Home</a><a onclick="showPage('booksPage')" id="nav-books">Books</a>
         <a onclick="showPage('eventsPage')" id="nav-events">Events</a><a onclick="showPage('favoritesPage')" id="nav-favorites">Favorites</a>
-        <a onclick="showPage('complaintsPage')" id="nav-complaints">Complaints</a>
+        <a onclick="showPage('complaintsPage')" id="nav-complaints">Complaints</a><a onclick="showPage('deliverablesPage')" id="nav-deliverables">Deliverables</a>
       </nav>
       <div class="nav-right"><span id="usernameDisplay">User</span><button id="logoutBtn" class="btn-logout">Logout</button></div>
     </header>
     <div class="search-bar-container"><input type="text" id="globalSearch" placeholder="Search books..." class="search-input"><button id="searchBtn" class="btn-search">Search</button></div>
-    <main id="homePage" class="container page-view">
-      <h2 id="welcomeMessage">Welcome!</h2>
-      <section class="section">
-        <h3>Project Deliverables</h3>
-        <div style="text-align: center; margin: 20px 0;">
-          <img src="images/phase2_deliverables.jpg" alt="Phase 2 Deliverables" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-        </div>
-      </section>
-      <section class="section">
-        <h3>Recently Added</h3>
-        <div id="recentBooks" class="book-grid"></div>
-      </section>
-      <section class="section">
-        <h3>Upcoming Events</h3>
-        <div id="upcomingEvents" class="event-grid"></div>
-      </section>
-    </main>
+    <main id="homePage" class="container page-view"><h2 id="welcomeMessage">Welcome!</h2><section class="section"><h3>Recently Added</h3><div id="recentBooks" class="book-grid"></div></section><section class="section"><h3>Upcoming Events</h3><div id="upcomingEvents" class="event-grid"></div></section></main>
     <main id="booksPage" class="container page-view"><h2>Library Books</h2><div class="filter-container"><label>Category:</label><select id="categoryFilter" class="form-select"><option value="All">All</option><option value="Computer Science">CS</option><option value="AI & ML">AI</option><option value="Physics">Physics</option><option value="Web Development">Web</option></select></div><div id="booksGrid" class="book-grid"></div></main>
     <main id="bookDetailPage" class="container page-view"><div id="bookDetailContent"></div></main>
     <main id="eventsPage" class="container page-view"><h2>Events</h2><div id="eventsList" class="event-grid"></div></main>
     <main id="favoritesPage" class="container page-view"><h2>Favorites</h2><div id="favoritesGrid" class="book-grid"></div></main>
     <main id="complaintsPage" class="container page-view"><h2>Feedback</h2><form id="complaintForm"><div class="form-group"><label>Type</label><select id="issueType" class="form-select" required><option value="Technical">Technical</option><option value="Other">Other</option></select></div><div class="form-group"><label>Message</label><textarea id="complaintMessage" rows="3" required></textarea></div><button type="submit" class="btn-primary">Submit</button></form></main>
+    <main id="deliverablesPage" class="container page-view">
+      <h2>Project Deliverables</h2>
+      <div class="section">
+        <h3>Phase 2: System Analysis and Design</h3>
+        <div style="text-align: center; margin: 20px 0; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <img src="images/phase2_deliverables.jpg" alt="Phase 2 Deliverables" style="max-width: 100%; border-radius: 4px;">
+        </div>
+      </div>
+    </main>
   </div>
   <script>
     const B = [
